@@ -1,0 +1,13 @@
+diff --git a/net/wireless/Kconfig b/net/wireless/Kconfig
+index 4f5543d..c67a23d 100644
+--- a/net/wireless/Kconfig
++++ b/net/wireless/Kconfig
+@@ -14,7 +14,7 @@ config WEXT_SPY
+ 	bool
+ 
+ config WEXT_PRIV
+-	bool
++	def_bool y
+ 
+ config CFG80211
+ 	tristate "cfg80211 - wireless configuration API"
