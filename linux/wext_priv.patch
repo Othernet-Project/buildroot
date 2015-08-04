@@ -1,7 +1,14 @@
 diff --git a/net/wireless/Kconfig b/net/wireless/Kconfig
-index 4f5543d..c67a23d 100644
+index 4f5543d..57de2f9 100644
 --- a/net/wireless/Kconfig
 +++ b/net/wireless/Kconfig
+@@ -1,5 +1,5 @@
+ config WIRELESS_EXT
+-	bool
++	def_bool y
+ 
+ config WEXT_CORE
+ 	def_bool y
 @@ -14,7 +14,7 @@ config WEXT_SPY
  	bool
  
