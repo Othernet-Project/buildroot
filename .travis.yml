@@ -12,6 +12,7 @@ addons:
       - libc6-i386
       - lib32stdc++6
       - lib32z1
+      - bc
 
 before_script:
 - pwd
