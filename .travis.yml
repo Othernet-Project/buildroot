@@ -1,0 +1,22 @@
+language: cpp
+
+before_install: 
+
+before_script:
+- pwd
+- ls
+- uname -a
+
+script:
+- make clean
+- make distclean
+- make chip_defconfig
+
+after_script:
+- echo "done"
+
+notifications:
+  email:
+  - kaplan2539@gmail.com
+  on_success: change
+  on_failure: always
