@@ -1,6 +1,18 @@
 language: cpp
 
-before_install: 
+addons:
+   apt:
+      packages:
+      - build-essential
+      - git
+      - cmake
+      - unzip
+      - device-tree-compiler
+      - libncurses-dev
+      - cu
+      - libc6-i386
+      - lib32stdc++6
+      - lib32z1
 
 before_script:
 - pwd
