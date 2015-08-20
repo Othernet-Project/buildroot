@@ -23,7 +23,7 @@ script:
 - make clean
 - make distclean
 - make chip_defconfig
-- make
+- make 2>&1 >make_log.txt
 
 after_script:
 - echo "done"
