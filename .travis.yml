@@ -9,7 +9,6 @@ addons:
       - unzip
       - device-tree-compiler
       - libncurses-dev
-      - cu
       - libc6-i386
       - lib32stdc++6
       - lib32z1
