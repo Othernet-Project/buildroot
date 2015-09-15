@@ -37,6 +37,11 @@ define CONNMAN_INSTALL_INIT_SYSTEMD
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/connman.service
 endef
 
+define CONNMAN_INSTALL_MAIN_CONFIG
+	$(INSTALL) -m 0644 -D package/connman/main.conf $(TARGET_DIR)/etc/connman/main.conf
+endef
+CONNMAN_POST_INSTALL_TARGET_HOOKS += CONNMAN_INSTALL_MAIN_CONFIG
+
 ifeq ($(BR2_PACKAGE_CONNMAN_CLIENT),y)
 CONNMAN_CONF_OPTS += --enable-client
 CONNMAN_DEPENDENCIES += readline
