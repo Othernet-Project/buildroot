@@ -2,4 +2,15 @@
 
 TARGET_DIR=$1
 
-echo "Welcome to CHIP Buildroot build $(cat build) rev $(cat buildroot_githash)" >${TARGET_DIR}/etc/issue
+BUILDROOT_GITHASH="$(cat buildroot_githash)"
+BUILDROOT_GITHASH="${BUILD_ROOT_GITHASH:0:8}"
+
+BUILD="$(cat build)"
+
+cat <<EOF >${TARGET_DIR}/etc/issue
+Welcome to CHIP Buildroot build ${BUILD} rev ${BUILDROOT_GITHASH}
+
+CHIP Buildroot contains various open source software.
+The source code can be downloaded from:
+http://opensource.nextthing.co/chip/buildroot/stable/${BUILD}/build${BUILD}.tar.gz
+EOF
