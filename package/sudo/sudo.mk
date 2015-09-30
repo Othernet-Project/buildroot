@@ -32,4 +32,12 @@ define SUDO_PERMISSIONS
 	/usr/bin/sudo f 4755 0 0 - - - - -
 endef
 
+define SUDO_ENABLE_SUDO_GROUP
+	sed -i -e 's/^\# \%sudo/\%sudo/' $(TARGET_DIR)/etc/sudoers
+endef
+
+ifdef BR2_SUDO_ENABLE_SUDO_GROUP
+SUDO_POST_INSTALL_TARGET_HOOKS += SUDO_ENABLE_SUDO_GROUP
+endif
+
 $(eval $(autotools-package))

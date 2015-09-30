@@ -9,3 +9,12 @@ config BR2_PACKAGE_SUDO
 	  but still allow people to get their work done.
 
 	  http://www.sudo.ws/sudo/
+
+if BR2_PACKAGE_SUDO
+
+config BR2_SUDO_ENABLE_SUDO_GROUP
+	bool "Enable sudo for sudo group"
+	help
+	  Modify /etc/sudoers to enable sudo for members of sudo group
+
+endif # BR2_PACKAGE_SUDO
