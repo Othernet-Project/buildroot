@@ -2,8 +2,8 @@
 
 BUILD_NUMBER=$1
 
-if s3cmd put --acl-public --no-guess-mime-type --recursive output/images s3://stak-images/firmware/chip/stable/${BUILD_NUMBER}/ |tee s3cmd_out.txt &&
-if s3cmd put --acl-public --no-guess-mime-type --recursive output/images s3://opensource.nextthing.co/chip/buildroot/stable/${BUILD_NUMBER}/ |tee s3cmd_os_out.txt
+if s3cmd put --acl-public --no-guess-mime-type --recursive output/images s3://stak-images/firmware/chip/stable/${BUILD_NUMBER}/ |tee s3cmd_out.txt && \
+   s3cmd put --acl-public --no-guess-mime-type --recursive output/images s3://opensource.nextthing.co/chip/buildroot/stable/${BUILD_NUMBER}/ |tee s3cmd_os_out.txt
 then
   echo "${BUILD_NUMBER}" >upload_buildno
   
