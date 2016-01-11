@@ -96,6 +96,9 @@ LINUX_VERSION_PROBED = `$(MAKE) $(LINUX_MAKE_FLAGS) -C $(LINUX_DIR) --no-print-d
 
 ifeq ($(BR2_LINUX_KERNEL_USE_INTREE_DTS),y)
 KERNEL_DTS_NAME = $(call qstrip,$(BR2_LINUX_KERNEL_INTREE_DTS_NAME))
+ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
+KERNEL_DTDS = $(addsuffix .dtd,$(KERNEL_DTS_NAME))
+endif
 else ifeq ($(BR2_LINUX_KERNEL_USE_CUSTOM_DTS),y)
 # We keep only the .dts files, so that the user can specify both .dts
 # and .dtsi files in BR2_LINUX_KERNEL_CUSTOM_DTS_PATH. Both will be
@@ -255,10 +258,26 @@ endef
 
 ifeq ($(BR2_LINUX_KERNEL_DTS_SUPPORT),y)
 ifeq ($(BR2_LINUX_KERNEL_DTB_IS_SELF_BUILT),)
+ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
+define LINUX_BUILD_DTD
+    echo "Building DTD"
+	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(KERNEL_DTDS)
+endef
+endif # BR2_LINUX_KERNEL_USE_DTD
 define LINUX_BUILD_DTB
+    # Building DTB
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(KERNEL_DTBS)
 endef
 ifeq ($(BR2_LINUX_KERNEL_APPENDED_DTB),)
+ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
+define LINUX_INSTALL_DTB
+	# dtbs for Amlogic kernels are located in arch/<ARCH>/boot/dts/amlogic/
+	cp $(addprefix \
+		$(KERNEL_ARCH_PATH)/boot/$(if $(wildcard \
+		$(addprefix $(KERNEL_ARCH_PATH)/boot/dts/amlogic/,$(KERNEL_DTBS))),dts/amlogic/),$(KERNEL_DTBS)) \
+		$(1)
+endef
+else
 define LINUX_INSTALL_DTB
 	# dtbs moved from arch/<ARCH>/boot to arch/<ARCH>/boot/dts since 3.8-rc1
 	cp $(addprefix \
@@ -266,6 +285,7 @@ define LINUX_INSTALL_DTB
 		$(addprefix $(KERNEL_ARCH_PATH)/boot/dts/,$(KERNEL_DTBS))),dts/),$(KERNEL_DTBS)) \
 		$(1)
 endef
+endif # BR2_LINUX_KERNEL_USE_DTD
 endif # BR2_LINUX_KERNEL_APPENDED_DTB
 endif # BR2_LINUX_KERNEL_DTB_IS_SELF_BUILT
 endif # BR2_LINUX_KERNEL_DTS_SUPPORT
@@ -309,6 +329,7 @@ define LINUX_BUILD_CMDS
 	@if grep -q "CONFIG_MODULES=y" $(@D)/.config; then 	\
 		$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) modules ;	\
 	fi
+	$(LINUX_BUILD_DTD)
 	$(LINUX_BUILD_DTB)
 	$(LINUX_APPEND_DTB)
 endef
