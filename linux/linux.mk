@@ -98,6 +98,9 @@ ifeq ($(BR2_LINUX_KERNEL_USE_INTREE_DTS),y)
 KERNEL_DTS_NAME = $(call qstrip,$(BR2_LINUX_KERNEL_INTREE_DTS_NAME))
 ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
 KERNEL_DTDS = $(addsuffix .dtd,$(KERNEL_DTS_NAME))
+KERNEL_DTB_PREFIX=amlogic/
+else
+KERNEL_DTB_PREFIX=
 endif
 else ifeq ($(BR2_LINUX_KERNEL_USE_CUSTOM_DTS),y)
 # We keep only the .dts files, so that the user can specify both .dts
@@ -260,7 +263,7 @@ ifeq ($(BR2_LINUX_KERNEL_DTS_SUPPORT),y)
 ifeq ($(BR2_LINUX_KERNEL_DTB_IS_SELF_BUILT),)
 ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
 define LINUX_BUILD_DTD
-    echo "Building DTD"
+    # Building DTD
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(KERNEL_DTDS)
 endef
 endif # BR2_LINUX_KERNEL_USE_DTD
@@ -269,23 +272,13 @@ define LINUX_BUILD_DTB
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(KERNEL_DTBS)
 endef
 ifeq ($(BR2_LINUX_KERNEL_APPENDED_DTB),)
-ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
 define LINUX_INSTALL_DTB
 	# dtbs for Amlogic kernels are located in arch/<ARCH>/boot/dts/amlogic/
 	cp $(addprefix \
 		$(KERNEL_ARCH_PATH)/boot/$(if $(wildcard \
-		$(addprefix $(KERNEL_ARCH_PATH)/boot/dts/amlogic/,$(KERNEL_DTBS))),dts/amlogic/),$(KERNEL_DTBS)) \
+		$(addprefix $(KERNEL_ARCH_PATH)/boot/dts/$(KERNEL_DTB_PREFIX),$(KERNEL_DTBS))),dts/$(KERNEL_DTB_PREFIX)),$(KERNEL_DTBS)) \
 		$(1)
 endef
-else
-define LINUX_INSTALL_DTB
-	# dtbs moved from arch/<ARCH>/boot to arch/<ARCH>/boot/dts since 3.8-rc1
-	cp $(addprefix \
-		$(KERNEL_ARCH_PATH)/boot/$(if $(wildcard \
-		$(addprefix $(KERNEL_ARCH_PATH)/boot/dts/,$(KERNEL_DTBS))),dts/),$(KERNEL_DTBS)) \
-		$(1)
-endef
-endif # BR2_LINUX_KERNEL_USE_DTD
 endif # BR2_LINUX_KERNEL_APPENDED_DTB
 endif # BR2_LINUX_KERNEL_DTB_IS_SELF_BUILT
 endif # BR2_LINUX_KERNEL_DTS_SUPPORT
@@ -297,6 +290,8 @@ define LINUX_APPEND_DTB
 		for dtb in $(KERNEL_DTS_NAME); do \
 			if test -e $${dtb}.dtb ; then \
 				dtbpath=$${dtb}.dtb ; \
+			elif test -e dts/amlogic/$${dtb}.dtb ; then \
+				dtbpath=dts/amlogic/$${dtb}.dtb ; \
 			else \
 				dtbpath=dts/$${dtb}.dtb ; \
 			fi ; \
