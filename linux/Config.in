@@ -386,7 +386,7 @@ config BR2_LINUX_KERNEL_INTREE_DTS_NAME
 	  dts files to build, separated by spaces.
 
 config BR2_LINUX_KERNEL_USE_DTD
-	bool "Build .dts from .dtd"
+	bool "Amlogic DTB"
 	depends on BR2_LINUX_KERNEL_USE_INTREE_DTS
 	help
 	  Amlogic kernel has .dtd files instead of .dts 
