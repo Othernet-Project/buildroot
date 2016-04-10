@@ -23,12 +23,12 @@ LINUX_SITE_METHOD = git
 else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_HG),y)
 LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_REPO_URL))
 LINUX_SITE_METHOD = hg
+else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_SVN),y)
+LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_REPO_URL))
+LINUX_SITE_METHOD = svn
 else
 LINUX_SOURCE = linux-$(LINUX_VERSION).tar.xz
 ifeq ($(BR2_LINUX_KERNEL_CUSTOM_VERSION),y)
-BR_NO_CHECK_HASH_FOR += $(LINUX_SOURCE)
-endif
-ifeq ($(BR2_LINUX_KERNEL_SAME_AS_HEADERS)$(BR2_KERNEL_HEADERS_VERSION),yy)
 BR_NO_CHECK_HASH_FOR += $(LINUX_SOURCE)
 endif
 # In X.Y.Z, get X and Y. We replace dots and dashes by spaces in order
@@ -96,12 +96,6 @@ LINUX_VERSION_PROBED = `$(MAKE) $(LINUX_MAKE_FLAGS) -C $(LINUX_DIR) --no-print-d
 
 ifeq ($(BR2_LINUX_KERNEL_USE_INTREE_DTS),y)
 KERNEL_DTS_NAME = $(call qstrip,$(BR2_LINUX_KERNEL_INTREE_DTS_NAME))
-ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
-KERNEL_DTDS = $(addsuffix .dtd,$(KERNEL_DTS_NAME))
-KERNEL_DTB_PREFIX=amlogic/
-else
-KERNEL_DTB_PREFIX=
-endif
 else ifeq ($(BR2_LINUX_KERNEL_USE_CUSTOM_DTS),y)
 # We keep only the .dts files, so that the user can specify both .dts
 # and .dtsi files in BR2_LINUX_KERNEL_CUSTOM_DTS_PATH. Both will be
@@ -193,6 +187,16 @@ endef
 
 LINUX_POST_PATCH_HOOKS += LINUX_APPLY_LOCAL_PATCHES
 
+# Older linux kernels use deprecated perl constructs in timeconst.pl
+# that were removed for perl 5.22+ so it breaks on newer distributions
+# Try a dry-run patch to see if this applies, if it does go ahead
+define LINUX_TRY_PATCH_TIMECONST
+	@if patch -p1 --dry-run -f -s -d $(@D) <$(LINUX_PKGDIR)/0001-timeconst.pl-Eliminate-Perl-warning.patch.conditional >/dev/null ; then \
+		$(APPLY_PATCHES) $(@D) $(LINUX_PKGDIR) 0001-timeconst.pl-Eliminate-Perl-warning.patch.conditional ; \
+	fi
+endef
+LINUX_POST_PATCH_HOOKS += LINUX_TRY_PATCH_TIMECONST
+
 ifeq ($(BR2_LINUX_KERNEL_USE_DEFCONFIG),y)
 LINUX_KCONFIG_DEFCONFIG = $(call qstrip,$(BR2_LINUX_KERNEL_DEFCONFIG))_defconfig
 else ifeq ($(BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG),y)
@@ -257,26 +261,21 @@ define LINUX_KCONFIG_FIXUP_CMDS
 		$(call KCONFIG_ENABLE_OPT,CONFIG_NF_CONNTRACK_MARK,$(@D)/.config))
 	$(if $(BR2_LINUX_KERNEL_APPENDED_DTB),
 		$(call KCONFIG_ENABLE_OPT,CONFIG_ARM_APPENDED_DTB,$(@D)/.config))
+	$(if $(BR2_PACKAGE_KERNEL_MODULE_IMX_GPU_VIV),
+		$(call KCONFIG_DISABLE_OPT,CONFIG_MXC_GPU_VIV,$(@D)/.config))
 endef
 
 ifeq ($(BR2_LINUX_KERNEL_DTS_SUPPORT),y)
 ifeq ($(BR2_LINUX_KERNEL_DTB_IS_SELF_BUILT),)
-ifeq ($(BR2_LINUX_KERNEL_USE_DTD),y)
-define LINUX_BUILD_DTD
-    # Building DTD
-	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(KERNEL_DTDS)
-endef
-endif # BR2_LINUX_KERNEL_USE_DTD
 define LINUX_BUILD_DTB
-    # Building DTB
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(KERNEL_DTBS)
 endef
 ifeq ($(BR2_LINUX_KERNEL_APPENDED_DTB),)
 define LINUX_INSTALL_DTB
-	# dtbs for Amlogic kernels are located in arch/<ARCH>/boot/dts/amlogic/
+	# dtbs moved from arch/<ARCH>/boot to arch/<ARCH>/boot/dts since 3.8-rc1
 	cp $(addprefix \
 		$(KERNEL_ARCH_PATH)/boot/$(if $(wildcard \
-		$(addprefix $(KERNEL_ARCH_PATH)/boot/dts/$(KERNEL_DTB_PREFIX),$(KERNEL_DTBS))),dts/$(KERNEL_DTB_PREFIX)),$(KERNEL_DTBS)) \
+		$(addprefix $(KERNEL_ARCH_PATH)/boot/dts/,$(KERNEL_DTBS))),dts/),$(KERNEL_DTBS)) \
 		$(1)
 endef
 endif # BR2_LINUX_KERNEL_APPENDED_DTB
@@ -290,8 +289,6 @@ define LINUX_APPEND_DTB
 		for dtb in $(KERNEL_DTS_NAME); do \
 			if test -e $${dtb}.dtb ; then \
 				dtbpath=$${dtb}.dtb ; \
-			elif test -e dts/amlogic/$${dtb}.dtb ; then \
-				dtbpath=dts/amlogic/$${dtb}.dtb ; \
 			else \
 				dtbpath=dts/$${dtb}.dtb ; \
 			fi ; \
@@ -319,12 +316,11 @@ endif
 # configuration has changed.
 define LINUX_BUILD_CMDS
 	$(if $(BR2_LINUX_KERNEL_USE_CUSTOM_DTS),
-		cp $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_DTS_PATH)) $(KERNEL_ARCH_PATH)/boot/dts/)
+		cp -f $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_DTS_PATH)) $(KERNEL_ARCH_PATH)/boot/dts/)
 	$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) $(LINUX_TARGET_NAME)
 	@if grep -q "CONFIG_MODULES=y" $(@D)/.config; then 	\
 		$(LINUX_MAKE_ENV) $(MAKE) $(LINUX_MAKE_FLAGS) -C $(@D) modules ;	\
 	fi
-	$(LINUX_BUILD_DTD)
 	$(LINUX_BUILD_DTB)
 	$(LINUX_APPEND_DTB)
 endef
