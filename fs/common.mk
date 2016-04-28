@@ -69,6 +69,11 @@ ROOTFS_$(2)_DEPENDENCIES += host-xz
 ROOTFS_$(2)_COMPRESS_EXT = .xz
 ROOTFS_$(2)_COMPRESS_CMD = xz -9 -C crc32 -c
 endif
+ifeq ($$(BR2_TARGET_ROOTFS_$(2)_LZ4),y)
+ROOTFS_$(2)_DEPENDENCIES += host-lz4
+ROOTFS_$(2)_COMPRESS_EXT = .lz4
+ROOTFS_$(2)_COMPRESS_CMD = lz4 -9 -l -c
+endif
 
 $$(BINARIES_DIR)/rootfs.$(1): target-finalize $$(ROOTFS_$(2)_DEPENDENCIES)
 	@$$(call MESSAGE,"Generating root filesystem image rootfs.$(1)")
