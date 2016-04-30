@@ -52,52 +52,45 @@ endchoice
 
 choice
 	prompt "Compression method"
-	default BR2_TARGET_ROOTFS_INITRAMFS_NONE
+	default BR2_CPIO_COMPRESSION_NONE
 	help
 	  Select compressor for cpio filesystem of the root filesystem.
 	  If you use the cpio archive as an initial RAM filesystem, make
 	  sure the kernel contains the decompression algorithm selected
 	  here.
 
-config BR2_TARGET_ROOTFS_INITRAMFS_NONE
+config BR2_CPIO_COMPRESSION_NONE
 	bool "no compression"
-	select BR2_TARGET_ROOTFS_CPIO_NONE if BR2_TARGET_ROOTFS_CPIO
 	help
 	  Do not compress the cpio filesystem.
 
-config BR2_TARGET_ROOTFS_INITRAMFS_GZIP
+config BR2_CPIO_COMPRESSION_GZIP
 	bool "gzip"
-	select BR2_TARGET_ROOTFS_CPIO_GZIP if BR2_TARGET_INITRAMFS_USE_ROOTFS
 	help
 	  Do compress the cpio filesystem with gzip.
 
-config BR2_TARGET_ROOTFS_INITRAMFS_BZIP2
+config BR2_CPIO_COMPRESSION_BZIP2
 	bool "bzip2"
-	select BR2_TARGET_ROOTFS_CPIO_BZIP2 if BR2_TARGET_INITRAMFS_USE_ROOTFS
 	help
 	  Do compress the cpio filesystem with bzip2.
 
-config BR2_TARGET_ROOTFS_INITRAMFS_LZMA
+config BR2_CPIO_COMPRESSION_LZMA
 	bool "lzma"
-	select BR2_TARGET_ROOTFS_CPIO_LZMA if BR2_TARGET_INITRAMFS_USE_ROOTFS
 	help
 	  Do compress the cpio filesystem with lzma.
 
-config BR2_TARGET_ROOTFS_INITRAMFS_LZO
+config BR2_CPIO_COMPRESSION_LZO
 	bool "lzo"
-	select BR2_TARGET_ROOTFS_CPIO_LZO if BR2_TARGET_INITRAMFS_USE_ROOTFS
 	help
 	  Do compress the cpio filesystem with lzop.
 
-config BR2_TARGET_ROOTFS_INITRAMFS_XZ
+config BR2_CPIO_COMPRESSION_XZ
 	bool "xz"
-	select BR2_TARGET_ROOTFS_CPIO_XZ if BR2_TARGET_INITRAMFS_USE_ROOTFS
 	help
 	  Do compress the cpio filesystem with xz.
 
-config BR2_TARGET_ROOTFS_INITRAMFS_LZ4
+config BR2_CPIO_COMPRESSION_LZ4
 	bool "lz4"
-	select BR2_TARGET_ROOTFS_CPIO_LZ4 if BR2_TARGET_INITRAMFS_USE_ROOTFS
 	help
 	  Do compress the cpio filesystem with lz4.
 
@@ -109,27 +102,25 @@ endif # BR2_INITRAMFS_USE_OTHER
 
 endif # BR2_TARGET_ROOTFS_INITRAMFS
 
-
 config BR2_CPIO_COMPRESSION
 	string
-	default ""
-	default "gz" if BR2_TARGET_ROOTFS_INITRAMFS_GZIP
-	default "bz2" if BR2_TARGET_ROOTFS_INITRAMFS_BZIP2
-	default "lzma" if BR2_TARGET_ROOTFS_INITRAMFS_LZMA
-	default "lzo" if BR2_TARGET_ROOTFS_INITRAMFS_LZO
-	default "xz" if BR2_TARGET_ROOTFS_INITRAMFS_XZ
-	default "lz4" if BR2_TARGET_ROOTFS_INITRAMFS_LZ4
-
+	default "" if BR2_CPIO_COMPRESSION_NONE
+	default "gz" if BR2_CPIO_COMPRESSION_GZIP
+	default "bz2" if BR2_CPIO_COMPRESSION_BZIP2
+	default "lzma" if BR2_CPIO_COMPRESSION_LZMA
+	default "lzo" if BR2_CPIO_COMPRESSION_LZO
+	default "xz" if BR2_CPIO_COMPRESSION_XZ
+	default "lz4" if BR2_CPIO_COMPRESSION_LZ4
 
 config BR2_CPIO_COMPRESSED_FILE
 	string
-	default "rootfs.cpio"
-	default "rootfs.cpio.gz" if BR2_TARGET_ROOTFS_INITRAMFS_GZIP
-	default "rootfs.cpio.bz2" if BR2_TARGET_ROOTFS_INITRAMFS_BZIP2
-	default "rootfs.cpio.lzma" if BR2_TARGET_ROOTFS_INITRAMFS_LZMA
-	default "rootfs.cpio.lzo" if BR2_TARGET_ROOTFS_INITRAMFS_LZO
-	default "rootfs.cpio.xz" if BR2_TARGET_ROOTFS_INITRAMFS_XZ
-	default "rootfs.cpio.lz4" if BR2_TARGET_ROOTFS_INITRAMFS_LZ4
+	default "rootfs.cpio" if BR2_CPIO_COMPRESSION_NONE
+	default "rootfs.cpio.gz" if BR2_CPIO_COMPRESSION_GZIP
+	default "rootfs.cpio.bz2" if BR2_CPIO_COMPRESSION_BZIP2
+	default "rootfs.cpio.lzma" if BR2_CPIO_COMPRESSION_LZMA
+	default "rootfs.cpio.lzo" if BR2_CPIO_COMPRESSION_LZO
+	default "rootfs.cpio.xz" if BR2_CPIO_COMPRESSION_XZ
+	default "rootfs.cpio.lz4" if BR2_CPIO_COMPRESSION_LZ4
 
 comment "initramfs needs a Linux kernel to be built"
 	depends on !BR2_LINUX_KERNEL
