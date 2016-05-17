@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-HWTEST_VERSION = master
+HWTEST_VERSION = chip/stable
 HWTEST_REPO_NAME=CHIP-hwtest
 HWTEST_SITE = https://github.com/NextThingCo/$(HWTEST_REPO_NAME)
 HWTEST_SITE_METHOD = git
