@@ -1,4 +1,4 @@
-# From https://pypi.python.org/pypi/setuptools/18.7.1
-md5 a0984da9cd8d7b582e1fd7de67dfdbcc setuptools-18.7.1.tar.gz
+# From https://pypi.python.org/pypi/setuptools/21.1.0
+md5 8fd8bdbf05c286063e1052be20a5bd98 setuptools-21.1.9.tar.gz
 # Locally calculated
-sha256  aff36c95035e0b311eacb1434e3f7e85f5ccaad477773847e582978f8f45bd74  setuptools-18.7.1.tar.gz
+sha256  eb5c7dd48fc9c76b4f10c016de834b7f6e09caabc7dff22ed26a70a4a12f394d  setuptools-21.1.0.tar.gz
