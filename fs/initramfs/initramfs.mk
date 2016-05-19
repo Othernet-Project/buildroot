@@ -29,7 +29,7 @@ ifndef $(BR_ROOTFS_CPIO)
 # linux-rebuild-with-iniramfs dependency is 
 # satisfied. A test is also preformed so that the
 # build does not yield unintended results.
-$(BINARIES_DIR)/$(BR2_CPIO_COMPRESSED_FILE): target-finalize
+$(BINARIES_DIR)/$(call qstrip,$(BR2_CPIO_COMPRESSED_FILE)): target-finalize
 	@$(call MESSAGE,"Using existing rootfs.cpio")
 	@test -f $@ || echo "ERROR: '$(BINARIES_DIR)/rootfs.cpio' was not found"
 
