@@ -12,6 +12,9 @@ UBOOT_LICENSE_FILES = Licenses/gpl-2.0.txt
 
 UBOOT_INSTALL_IMAGES = YES
 
+# TODO(ntc/ryan): Set this conditionally based on a BR2 config.
+NTC_CHIP_SPECIFIC_ENV = LOGO_BMP="$(@D)/tools/logos/chip.bmp"
+
 ifeq ($(UBOOT_VERSION),custom)
 # Handle custom U-Boot tarballs as specified by the configuration
 UBOOT_TARBALL = $(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_TARBALL_LOCATION))
@@ -71,23 +74,11 @@ UBOOT_BIN = u-boot.bin
 UBOOT_BIN_IFT = $(UBOOT_BIN).ift
 endif
 
-# The kernel calls AArch64 'arm64', but U-Boot calls it just 'arm', so
-# we have to special case it. Similar for i386/x86_64 -> x86
-ifeq ($(KERNEL_ARCH),arm64)
-UBOOT_ARCH = arm
-else ifneq ($(filter $(KERNEL_ARCH),i386 x86_64),)
-UBOOT_ARCH = x86
-else
 UBOOT_ARCH = $(KERNEL_ARCH)
-endif
 
 UBOOT_MAKE_OPTS += \
-	CROSS_COMPILE="$(TARGET_CROSS)" \
+	CROSS_COMPILE="$(CCACHE) $(TARGET_CROSS)" \
 	ARCH=$(UBOOT_ARCH)
-
-ifeq ($(BR2_TARGET_UBOOT_NEEDS_DTC),y)
-UBOOT_DEPENDENCIES += host-dtc
-endif
 
 # Helper function to fill the U-Boot config.h file.
 # Argument 1: option name
@@ -110,7 +101,6 @@ define UBOOT_COPY_OLD_LICENSE_FILE
 endef
 
 UBOOT_POST_EXTRACT_HOOKS += UBOOT_COPY_OLD_LICENSE_FILE
-UBOOT_POST_RSYNC_HOOKS += UBOOT_COPY_OLD_LICENSE_FILE
 
 # Prior to Buildroot 2015.05, only patch directories were supported. New
 # configurations use BR2_TARGET_UBOOT_PATCH instead.
@@ -148,16 +138,19 @@ define UBOOT_CONFIGURE_CMDS
 endef
 else ifeq ($(BR2_TARGET_UBOOT_BUILD_SYSTEM_KCONFIG),y)
 ifeq ($(BR2_TARGET_UBOOT_USE_DEFCONFIG),y)
-UBOOT_KCONFIG_DEFCONFIG = $(call qstrip,$(BR2_TARGET_UBOOT_BOARD_DEFCONFIG))_defconfig
+UBOOT_SOURCE_CONFIG = $(UBOOT_DIR)/configs/$(call qstrip,\
+	$(BR2_TARGET_UBOOT_BOARD_DEFCONFIG))_defconfig
 else ifeq ($(BR2_TARGET_UBOOT_USE_CUSTOM_CONFIG),y)
-UBOOT_KCONFIG_FILE = $(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_CONFIG_FILE))
+UBOOT_SOURCE_CONFIG = $(call qstrip,$(BR2_TARGET_UBOOT_CUSTOM_CONFIG_FILE))
 endif # BR2_TARGET_UBOOT_USE_DEFCONFIG
 
+UBOOT_KCONFIG_FILE = $(UBOOT_SOURCE_CONFIG)
 UBOOT_KCONFIG_EDITORS = menuconfig xconfig gconfig nconfig
 UBOOT_KCONFIG_OPTS = $(UBOOT_MAKE_OPTS)
 endif # BR2_TARGET_UBOOT_BUILD_SYSTEM_LEGACY
 
 define UBOOT_BUILD_CMDS
+	$(NTC_CHIP_SPECIFIC_ENV) \
 	$(TARGET_CONFIGURE_OPTS) 	\
 		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) 		\
 		$(UBOOT_MAKE_TARGET)
@@ -181,7 +174,9 @@ define UBOOT_INSTALL_IMAGES_CMDS
 	$(if $(BR2_TARGET_UBOOT_FORMAT_NAND),
 		cp -dpf $(@D)/$(UBOOT_MAKE_TARGET) $(BINARIES_DIR))
 	$(if $(BR2_TARGET_UBOOT_SPL),
-		cp -dpf $(@D)/$(call qstrip,$(BR2_TARGET_UBOOT_SPL_NAME)) $(BINARIES_DIR)/)
+		for p in $(call qstrip,$(BR2_TARGET_UBOOT_SPL_NAME)); do \
+			cp -dpf $(@D)/$$p $(BINARIES_DIR)/; \
+		done)
 	$(if $(BR2_TARGET_UBOOT_ENVIMAGE),
 		$(HOST_DIR)/usr/bin/mkenvimage -s $(BR2_TARGET_UBOOT_ENVIMAGE_SIZE) \
 		$(if $(BR2_TARGET_UBOOT_ENVIMAGE_REDUNDANT),-r) \
@@ -208,9 +203,11 @@ endif
 
 ifeq ($(BR2_TARGET_UBOOT_ZYNQ_IMAGE),y)
 define UBOOT_GENERATE_ZYNQ_IMAGE
-	$(HOST_DIR)/usr/bin/python2 $(HOST_DIR)/usr/bin/zynq-boot-bin.py \
-		-u $(@D)/$(call qstrip,$(BR2_TARGET_UBOOT_SPL_NAME))     \
-		-o $(BINARIES_DIR)/BOOT.BIN
+	for p in $(call qstrip,$(BR2_TARGET_UBOOT_SPL_NAME)); do \
+		$(HOST_DIR)/usr/bin/python2 $(HOST_DIR)/usr/bin/zynq-boot-bin.py \
+			-u $(@D)/$$p -o $(BINARIES_DIR)/BOOT.BIN; \
+		fi; \
+	done
 endef
 UBOOT_DEPENDENCIES += host-zynq-boot-bin
 UBOOT_POST_INSTALL_IMAGES_HOOKS += UBOOT_GENERATE_ZYNQ_IMAGE

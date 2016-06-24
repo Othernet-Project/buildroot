@@ -38,7 +38,7 @@ choice
 	  Select the specific U-Boot version you want to use
 
 config BR2_TARGET_UBOOT_LATEST_VERSION
-	bool "2015.10"
+	bool "2015.07"
 
 config BR2_TARGET_UBOOT_CUSTOM_VERSION
 	bool "Custom version"
@@ -83,7 +83,7 @@ endif
 
 config BR2_TARGET_UBOOT_VERSION
 	string
-	default "2015.10"	if BR2_TARGET_UBOOT_LATEST_VERSION
+	default "2015.07"	if BR2_TARGET_UBOOT_LATEST_VERSION
 	default BR2_TARGET_UBOOT_CUSTOM_VERSION_VALUE \
 		if BR2_TARGET_UBOOT_CUSTOM_VERSION
 	default "custom"	if BR2_TARGET_UBOOT_CUSTOM_TARBALL
@@ -138,13 +138,6 @@ config BR2_TARGET_UBOOT_CUSTOM_CONFIG_FILE
 	help
 	  Path to the U-Boot configuration file.
 endif
-
-config BR2_TARGET_UBOOT_NEEDS_DTC
-	bool "U-Boot needs dtc"
-	select BR2_PACKAGE_HOST_DTC
-	help
-	  Select this option if your U-Boot board configuration
-	  requires the Device Tree compiler to be available.
 
 choice
 	prompt "U-Boot binary format"
@@ -322,7 +315,7 @@ config BR2_TARGET_UBOOT_SPL_NAME
 	default "spl/u-boot-spl.bin"
 	depends on BR2_TARGET_UBOOT_SPL
 	help
-	  This is the name of the SPL binary, generated during
+	  A space-separated list of SPL binaries, generated during
 	  u-boot build. For most platform it is spl/u-boot-spl.bin
 	  but not always. It is MLO on OMAP for example.
 
