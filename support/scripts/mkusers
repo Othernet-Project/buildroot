@@ -276,7 +276,12 @@ add_user_to_group() {
 encode_password() {
     local passwd="${1}"
 
-    mkpasswd -m "${PASSWD_METHOD}" "${passwd}"
+    if [ -n "$MKPASSWD_SALT" ]
+    then
+        mkpasswd -S "$MKPASSWD_SALT" -m "${PASSWD_METHOD}" "${passwd}"
+    else
+        mkpasswd -m "${PASSWD_METHOD}" "${passwd}"
+    fi
 }
 
 #----------------------------------------------------------------------------
