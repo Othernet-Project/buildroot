@@ -154,6 +154,9 @@ define UBOOT_BUILD_CMDS
 	$(TARGET_CONFIGURE_OPTS) 	\
 		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) 		\
 		$(UBOOT_MAKE_TARGET)
+	$(TARGET_CONFIGURE_OPTS) 	\
+		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) 		\
+		env
 	$(if $(BR2_TARGET_UBOOT_FORMAT_SD),
 		$(@D)/tools/mxsboot sd $(@D)/u-boot.sb $(@D)/u-boot.sd)
 	$(if $(BR2_TARGET_UBOOT_FORMAT_NAND),
@@ -171,6 +174,8 @@ endef
 
 define UBOOT_INSTALL_IMAGES_CMDS
 	cp -dpf $(@D)/$(UBOOT_BIN) $(BINARIES_DIR)/
+    $(INSTALL) -D -m 755 $(@D)/tools/env/fw_printenv $(TARGET_DIR)/usr/sbin
+    $(INSTALL) -D -m 755 $(@D)/tools/env/fw_printenv $(TARGET_DIR)/usr/sbin/fw_setenv
 	$(if $(BR2_TARGET_UBOOT_FORMAT_NAND),
 		cp -dpf $(@D)/$(UBOOT_MAKE_TARGET) $(BINARIES_DIR))
 	$(if $(BR2_TARGET_UBOOT_SPL),
