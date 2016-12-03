@@ -30,6 +30,13 @@ else
 SUDO_CONF_OPTS += --without-pam
 endif
 
+define SUDO_INSTALL_REMOVE_VISUDO
+    rm -f $(TARGET_DIR)/usr/sbin/visudo
+endef
+
+SUDO_POST_INSTALL_TARGET_HOOKS += SUDO_INSTALL_REMOVE_VISUDO
+
+
 # mksigname/mksiglist needs to run on build host to generate source files
 define SUDO_BUILD_MKSIGNAME_MKSIGLIST_HOST
 	$(MAKE) $(HOST_CONFIGURE_OPTS) \
