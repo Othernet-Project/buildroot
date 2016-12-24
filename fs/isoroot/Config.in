@@ -2,5 +2,3 @@ config BR2_TARGET_ROOTFS_ISOROOT
 	bool "isofs root filesystem for the target device"
 	help
 	  Build a isofs root filesystem
-
-        isofs rootfs
