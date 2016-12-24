@@ -4,9 +4,9 @@
 #
 ################################################################################
 
-CDRKIT_VERSION = 1.1.11
-CDRKIT_SOURCE = cdrkit_$(CDRKIT_VERSION).orig.tar.gz
-CDRKIT_SITE = http://snapshot.debian.org/archive/debian/20141023T043132Z/pool/main/c/cdrkit
+CDRKIT_VERSION = alpha-002
+CDRKIT_SITE = https://github.com/Outernet-Project/cdrkit
+CDRKIT_SITE_METHOD = git
 CDRKIT_DEPENDENCIES = libcap bzip2 zlib
 CDRKIT_LICENSE = GPLv2
 CDRKIT_LICENSE_FILES = COPYING
