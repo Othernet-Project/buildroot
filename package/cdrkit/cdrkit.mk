@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-CDRKIT_VERSION = alpha-002
+CDRKIT_VERSION = v1.0
 CDRKIT_SITE = https://github.com/Outernet-Project/cdrkit
 CDRKIT_SITE_METHOD = git
 CDRKIT_DEPENDENCIES = libcap bzip2 zlib
