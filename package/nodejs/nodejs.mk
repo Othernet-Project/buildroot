@@ -161,6 +161,15 @@ define NODEJS_INSTALL_MODULES
 	# npm install call below and setting npm_config_rollback=false can both
 	# help in diagnosing the problem.
 	$(NPM) install -g $(NODEJS_MODULES_LIST)
+    # cleanup docs
+    find $(TARGET_DIR)/usr/lib/node_modules | grep -e '.md$' | xargs rm -f
+    # cleanup tests
+    find $(TARGET_DIR)/usr/lib/node_modules -type d | grep test | xargs rm -rf
+    # cleanup examples
+    find $(TARGET_DIR)/usr/lib/node_modules -type d | grep example | xargs rm -rf
+    # cleanup after binary modules
+    rm -rf $(TARGET_DIR)/usr/lib/node_modules/*/build/Release/.deps
+    rm -rf $(TARGET_DIR)/usr/lib/node_modules/*/build/Release/obj.target
 endef
 endif
 
