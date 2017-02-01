@@ -1,0 +1,16 @@
+This patch remove git_rev from the built binary 
+as it causes unnecessary deltas in bsdiff
+
+diff --git a/Makefile.in b/Makefile.in
+index 187a69b..812e7be 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -23,7 +23,7 @@ VERSION = @VERSION@
+ SCREEN = screen-$(VERSION)
+ 
+ GIT_REV = "`git describe --always 2>/dev/null`"
+-DEFS = @DEFS@ -DGIT_REV=\"$(GIT_REV)\"
++DEFS = @DEFS@ -DGIT_REV=\"\"
+ 
+ ETCSCREENRC = @ETCSCREENRC@
+ ifeq (${ETCSCREENRC}, )
