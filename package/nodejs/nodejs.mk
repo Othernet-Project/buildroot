@@ -162,7 +162,9 @@ define NODEJS_INSTALL_MODULES
 	# help in diagnosing the problem.
 	$(NPM) install -g $(NODEJS_MODULES_LIST)
     # cleanup docs
-    find $(TARGET_DIR)/usr/lib/node_modules | grep -e '.md$$' | xargs rm -f
+    find $(TARGET_DIR)/usr/lib/node_modules | grep -e '\.md$$' | xargs rm -f
+    # cleanup header files
+    find $(TARGET_DIR)/usr/lib/node_modules | grep -e '\.h$$' | xargs rm -f
     # cleanup tests
     find $(TARGET_DIR)/usr/lib/node_modules -type d | grep test | xargs rm -rf
     # cleanup examples
