@@ -1,5 +1,5 @@
 config BR2_TARGET_ROOTFS_ISOROOT
 	bool "isofs root filesystem for the target device"
-	depends on BR2_PACKAGE_UBI_IMAGE
+	depends on BR2_PACKAGE_UBI_IMAGE || BR2_PACKAGE_SD_IMAGE
 	help
 	  Build a isofs root filesystem
