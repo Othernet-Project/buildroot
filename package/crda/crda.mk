@@ -25,7 +25,8 @@ endef
 
 define CRDA_INSTALL_TARGET_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(MAKE) install -C $(@D) DESTDIR=$(TARGET_DIR)
-	$(INSTALL) -Dm755 $(@D)/udev/85-regulatory.rules $(TARGET_DIR)/etc/udev/
+	$(INSTALL) -d -m755 $(TARGET_DIR)/etc/udev/rules.d/
+	$(INSTALL) -Dm755 $(@D)/udev/85-regulatory.rules $(TARGET_DIR)/etc/udev/rules.d/
 endef
 
 $(eval $(generic-package))

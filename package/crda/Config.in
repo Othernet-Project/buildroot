@@ -8,6 +8,7 @@ config BR2_PACKAGE_CRDA
 	select BR2_PACKAGE_WIRELESS_REGDB
 	# Triggers the _gp link issue
 	depends on !BR2_TOOLCHAIN_EXTERNAL_CODESOURCERY_NIOSII
+    depends on BR2_PACKAGE_EUDEV
 	help
 	  Central Regulatory Domain Agent.
 
