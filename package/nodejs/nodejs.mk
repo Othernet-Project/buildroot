@@ -156,7 +156,9 @@ NPM = $(TARGET_CONFIGURE_OPTS) \
 # We can only call NPM if there's something to install.
 #
 ifneq ($(NODEJS_MODULES_LIST),)
+ifeq ($(KEY_RELEASE),)
 define NODEJS_INSTALL_MODULES
+    echo "npm install in KEY RELEASE"
 	# If you're having trouble with module installation, adding -d to the
 	# npm install call below and setting npm_config_rollback=false can both
 	# help in diagnosing the problem.
@@ -172,7 +174,15 @@ define NODEJS_INSTALL_MODULES
     # cleanup after binary modules
     rm -rf $(TARGET_DIR)/usr/lib/node_modules/*/build/Release/.deps
     rm -rf $(TARGET_DIR)/usr/lib/node_modules/*/build/Release/obj.target
+    # make a backup of the node_modules install
+    tar zcf $(BINARIES_DIR)/node_modules.tgz -C $(TARGET_DIR) usr/lib/node_modules
 endef
+else
+define NODEJS_INSTALL_MODULES
+    echo "no npm install, just extract from $(KEY_RELEASE)"
+    tar zxf $(TOPDIR)/../../rxos_builds/RELEASES/$(KEY_RELEASE)/node_modules.tgz -C $(TARGET_DIR)
+endef
+endif
 endif
 
 define NODEJS_INSTALL_TARGET_CMDS
