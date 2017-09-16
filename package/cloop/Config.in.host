@@ -1,0 +1,5 @@
+config BR2_PACKAGE_HOST_CLOOP
+	bool "cloop"
+	help
+		compressed loop (cloop) tools
+

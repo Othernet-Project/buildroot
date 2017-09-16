@@ -832,6 +832,7 @@ menu "Filesystem"
 	source "package/libnfs/Config.in"
 	source "package/libsysfs/Config.in"
 	source "package/lockdev/Config.in"
+	source "package/cloop/Config.in"
 endmenu
 
 menu "Graphics"

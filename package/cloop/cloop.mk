@@ -19,7 +19,7 @@ endef
 define CLOOP_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 0755 -d $(TARGET_DIR)/usr/bin
 	$(INSTALL) -m 755 $(@D)/create_compressed_fs $(TARGET_DIR)/usr/bin
-	$(INSTALL) -m 755 $(@D)/extract_compressed_fs $(TAREGT_DIR)/usr/bin
+	$(INSTALL) -m 755 $(@D)/extract_compressed_fs $(TARGET_DIR)/usr/bin
 endef
 
 HOST_CLOOP_DEPENDENCIES = host-zlib
