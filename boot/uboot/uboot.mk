@@ -156,6 +156,9 @@ define UBOOT_BUILD_CMDS
 	$(TARGET_CONFIGURE_OPTS) 	\
 		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) 		\
 		env
+	$(TARGET_CONFIGURE_OPTS)        \
+		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS)             \
+		envtools
 	$(if $(BR2_TARGET_UBOOT_FORMAT_SD),
 		$(@D)/tools/mxsboot sd $(@D)/u-boot.sb $(@D)/u-boot.sd)
 	$(if $(BR2_TARGET_UBOOT_FORMAT_NAND),
