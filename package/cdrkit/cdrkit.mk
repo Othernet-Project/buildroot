@@ -5,7 +5,7 @@
 ################################################################################
 
 CDRKIT_VERSION = v1.0
-CDRKIT_SITE = https://github.com/Outernet-Project/cdrkit
+CDRKIT_SITE = https://github.com/Othernet-Project/cdrkit
 CDRKIT_SITE_METHOD = git
 CDRKIT_DEPENDENCIES = libcap bzip2 zlib
 CDRKIT_LICENSE = GPLv2

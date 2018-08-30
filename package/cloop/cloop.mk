@@ -5,7 +5,7 @@
 ################################################################################
 
 CLOOP_VERSION = 5.2
-CLOOP_SITE = https://github.com/Outernet-Project/cloop
+CLOOP_SITE = https://github.com/Othernet-Project/cloop
 CLOOP_SITE_METHOD = git
 CLOOP_LICENSE = GPLv2 (module), GPLv2+ (advancecomp)
 CLOOP_LICENSE_FILES = README advancecomp-1.15/COPYING
