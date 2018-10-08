@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FFMPEG_VERSION = 2.8.4
+FFMPEG_VERSION = 3.4.4
 FFMPEG_SOURCE = ffmpeg-$(FFMPEG_VERSION).tar.xz
 FFMPEG_SITE = http://ffmpeg.org/releases
 FFMPEG_INSTALL_STAGING = YES
@@ -26,7 +26,6 @@ FFMPEG_CONF_OPTS = \
 	--enable-avdevice \
 	--enable-avcodec \
 	--enable-avformat \
-	--disable-x11grab \
 	--enable-network \
 	--disable-gray \
 	--enable-swscale-alpha \
@@ -40,8 +39,6 @@ FFMPEG_CONF_OPTS = \
 	--disable-dxva2 \
 	--enable-runtime-cpudetect \
 	--disable-hardcoded-tables \
-	--disable-memalign-hack \
-	--disable-mipsdspr1 \
 	--disable-mipsdspr2 \
 	--disable-msa \
 	--enable-hwaccels \
@@ -52,13 +49,9 @@ FFMPEG_CONF_OPTS = \
 	--disable-libopencv \
 	--disable-libcdio \
 	--disable-libdc1394 \
-	--disable-libfaac \
 	--disable-libgsm \
 	--disable-libilbc \
-	--disable-libnut \
 	--disable-libopenjpeg \
-	--disable-libschroedinger \
-	--disable-libvo-aacenc \
 	--disable-libvo-amrwbenc \
 	--disable-symver \
 	--disable-doc
@@ -222,7 +215,7 @@ ifeq ($(BR2_PACKAGE_LIBDCADEC),y)
 FFMPEG_CONF_OPTS += --enable-libdcadec
 FFMPEG_DEPENDENCIES += libdcadec
 else
-FFMPEG_CONF_OPTS += --disable-libdcadec
+#FFMPEG_CONF_OPTS += --disable-libdcadec
 endif
 
 ifeq ($(BR2_PACKAGE_LIBOPENH264),y)

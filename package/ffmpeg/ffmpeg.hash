@@ -1,2 +1,3 @@
 # Locally calculated
 sha256	8b6380a748fe2e0903d875b30aa613d1057824682d8d52f378d5aa5fc0dd951f	ffmpeg-2.8.4.tar.xz
+sha256  386f7601e865df6bddde05bb6927119b5a853f0b92e2e9834f59c125a17d3fc6        ffmpeg-3.4.4.tar.xz
