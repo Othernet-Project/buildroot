@@ -282,6 +282,13 @@ else
 FFMPEG_CONF_OPTS += --disable-libmp3lame
 endif
 
+ifeq ($(BR2_PACKAGE_SHINE),y)
+FFMPEG_CONF_OPTS += --enable-libshine
+FFMPEG_DEPENDENCIES += shine
+else
+FFMPEG_CONF_OPTS += --disable-libshine
+endif
+
 ifeq ($(BR2_PACKAGE_LIBMODPLUG),y)
 FFMPEG_CONF_OPTS += --enable-libmodplug
 FFMPEG_DEPENDENCIES += libmodplug
