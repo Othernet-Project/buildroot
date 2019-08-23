@@ -40,6 +40,8 @@ else ifeq ($(findstring x3.,x$(LINUX_VERSION)),x3.)
 LINUX_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/v3.x
 else ifeq ($(findstring x4.,x$(LINUX_VERSION)),x4.)
 LINUX_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/v4.x
+else ifeq ($(findstring x5.,x$(LINUX_VERSION)),x5.)
+LINUX_SITE = $(BR2_KERNEL_MIRROR)/linux/kernel/v5.x
 endif
 # release candidates are in testing/ subdir
 ifneq ($(findstring -rc,$(LINUX_VERSION)),)
